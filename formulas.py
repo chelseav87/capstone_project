@@ -5,21 +5,42 @@ class FormulaGroup:
             setattr(self, key, value)
 
 class DepreciationMethods:
-    def __init__(self):
-        pass
+    def __init__(self, asset_cost, salvage_value, useful_life):
+        self.asset_cost = asset_cost
+        self.salvage_value = salvage_value
+        self.useful_life = useful_life
 
     def depreciation_expense(self):
-        pass
+        return None
 
 
 # --- Derived Classes --- #
 class FundamentalEquations(FormulaGroup):
+
+    @property
     def accounting_equation(self):
-        return None
+        asset = getattr(self, "assets", None)
+        liabilities = getattr(self, "liabilities", None)
+        equity = getattr(self, "equity", None)
 
+        if asset is not None and liabilities is not None and equity is None:
+            return f"Equity: {asset - liabilities}"
+
+        if asset is not None and liabilities is None and equity is not None:
+            return f"Liabilities: {asset - equity}"
+
+        if asset is None and liabilities is not None and equity is not None:
+            return f"Assets: {liabilities + equity}"
+
+        return ValueError("Not enough information given or all fields are already known.")
+
+    @property
     def accounting_expanded_equation(self):
-        return None
+        pass
 
+# creating an object instance test
+test = FundamentalEquations(assets=10000, liabilities=1000, equity=9000)
+print(test.accounting_equation)
 
 class IncomeStatement(FormulaGroup):
     def net_sales(self):
@@ -123,6 +144,17 @@ class EfficiencyRatios(FormulaGroup):
     def asset_turnover(self):
         return None
 
+
 class StraightLine(DepreciationMethods):
+    def depreciation_expense(self):
+        return None
+
+
+class DoubleDecliningBalance(DepreciationMethods):
+    def depreciation_expense(self):
+        return None
+
+
+class UnitsOfProduction(DepreciationMethods):
     def depreciation_expense(self):
         return None
