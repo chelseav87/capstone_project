@@ -1,12 +1,48 @@
 from sympy import *
 
-field_error = ValueError("Insufficient information given.")
-
 # --- Base Classes --- #
 class FormulaModel:
+    variables = {}
+    equations = []
+
     def __init__(self, **kwargs):
-        for key, value in kwargs.items():
-            setattr(self, key, value)
+        self.values = kwargs
+
+    def solve(self, target):
+        to_solve = self.variables[target]
+
+        # Substitution mapping
+        known_values = {self.variables[key]: value for key, value in self.values.items()}
+
+        # Filtering valid equation, if any
+        relevant_equations = []
+        for equation in self.equations:
+            if to_solve in equation.free_symbols:
+                invalid_variables = equation.free_symbols - {to_solve}
+                if all(variable in known_values for variable in invalid_variables):
+                    relevant_equations.append(equation)
+
+        if not relevant_equations:
+            return ValueError("Insufficient information given.")
+
+        # Substituting all given values into given equation
+        known_values = [equation.subs(known_values) for equation in relevant_equations]
+
+        # Calculation
+        solution = solve(known_values[0], to_solve)
+
+        # User-input error handling
+        if not solution: # check if no solution
+            return ValueError("Insufficient information given.")
+        if isinstance(solution, list): # check list output
+            solution = solution[0]
+        if isinstance(solution, dict): # check dictionary output
+            solution = solution[to_solve]
+        if hasattr(solution, "free_symbols") and solution.free_symbols: # check symbolic output
+            return ValueError("Insufficient information given or desired variable is already known.")
+
+        return solution
+
 
 class DepreciationMethods:
     def __init__(self, asset_cost, salvage_value, useful_life):
@@ -20,143 +56,139 @@ class DepreciationMethods:
 
 # --- Derived Classes --- #
 class FundamentalEquations(FormulaModel):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.values = kwargs
-
-    def accounting_equation(self, to_solve):
-        assets, liabilities, equity = symbols("assets, liabilities, equity")
-        accounting_equation = Eq(assets, liabilities + equity)
-
-        known_values = {symbols(key): value for key, value in self.values.items()}
-        solution = solve(accounting_equation.subs(known_values), symbols(to_solve))
-
-        if not solution:
-            return field_error
-
-        return f"${solution[0]:.02f}"
-
-    def accounting_expanded_equation(self):
-        return field_error
+    variables = {
+        "assets": symbols("assets"),
+        "liabilities": symbols("liabilities"),
+        "equity": symbols("equity"),
+        "common_stock": symbols("common_stock"),
+        "dividends": symbols("dividends"),
+        "revenues": symbols("revenues"),
+        "expenses": symbols("expenses")
+    }
+    equations = [
+        Eq(variables["assets"], variables["liabilities"] + variables["equity"]),
+        Eq(variables["equity"], variables["common_stock"] + variables["revenues"] - variables["expenses"]- variables["dividends"])
+    ]
 
 # creating an object instance test, to be deleted once GUI is completed
-test = FundamentalEquations(liabilities=1000, equity=9000)
-print(test.accounting_equation("assets"))
+test = FundamentalEquations(assets=10000,liabilities=9000,common_stock=10000, revenues=10000, expenses=1000, dividends=100)
+print(test.solve("equity"))
 
 
 class IncomeStatement(FormulaModel):
     def net_sales(self):
-        return field_error
+        return None
 
     def cost_of_goods_sold(self):
-        return field_error
+        return None
 
     def gross_profit(self):
-        return field_error
+        return None
 
     def operating_income(self):
-        return field_error
+        return None
 
     def net_income(self):
-        return field_error
+        return None
 
 
 class BalanceSheet(FormulaModel):
     def working_capital(self):
-        return field_error
+        return None
 
     def asset_book_value(self):
-        return field_error
+        return None
 
     def total_equity(self):
-        return field_error
+        return None
+
 
 class CashFlow(FormulaModel):
     def free_cash_flow(self):
-        return field_error
+        return None
 
     def cash_conversion_cycle(self):
-        return field_error
+        return None
 
 
 class ProfitabilityRatios(FormulaModel):
     def profit_margin(self):
-        return field_error
+        return None
 
     def gross_margin(self):
-        return field_error
+        return None
 
     def return_on_assets(self):
-        return field_error
+        return None
 
     def return_on_equity(self):
-        return field_error
+        return None
 
     def earnings_per_share(self):
-        return field_error
+        return None
 
     def price_to_earnings(self):
-        return field_error
+        return None
 
 
 class LiquidityRatios(FormulaModel):
     def current(self):
-        return field_error
+        return None
 
     def quick(self):
-        return field_error
+        return None
 
     def cash(self):
-        return field_error
+        return None
 
 
 class SolvencyRatios(FormulaModel):
     def debt(self):
-        return field_error
+        return None
 
     def debt_to_equity(self):
-        return field_error
+        return None
 
     def times_interest_earned(self):
-        return field_error
+        return None
 
     def equity_multiplier(self):
-        return field_error
+        return None
 
 
 class EfficiencyRatios(FormulaModel):
     def inventory_turnover(self):
-        return field_error
+        return None
 
     def accounts_receivable_turnover(self):
-        return field_error
+        return None
 
     def accounts_payable_turnover(self):
-        return field_error
+        return None
 
     def days_sales_in_inventory(self):
-        return field_error
+        return None
 
     def days_sales_outstanding(self):
-        return field_error
+        return None
 
     def days_payables_outstanding(self):
-        return field_error
+        return None
 
     def asset_turnover(self):
-        return field_error
+        return None
 
 
 class StraightLine(DepreciationMethods):
     def depreciation_expense(self):
-        return field_error
+        return None
 
 
 class DoubleDecliningBalance(DepreciationMethods):
     def depreciation_expense(self):
-        return field_error
+        return None
 
 
 class UnitsOfProduction(DepreciationMethods):
     def depreciation_expense(self):
-        return field_error
+        return None
