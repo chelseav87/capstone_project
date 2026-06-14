@@ -1,5 +1,9 @@
+from sympy import *
+
+field_error = ValueError("Insufficient information given.")
+
 # --- Base Classes --- #
-class FormulaGroup:
+class FormulaModel:
     def __init__(self, **kwargs):
         for key, value in kwargs.items():
             setattr(self, key, value)
@@ -15,146 +19,144 @@ class DepreciationMethods:
 
 
 # --- Derived Classes --- #
-class FundamentalEquations(FormulaGroup):
+class FundamentalEquations(FormulaModel):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.values = kwargs
 
-    @property
-    def accounting_equation(self):
-        asset = getattr(self, "assets", None)
-        liabilities = getattr(self, "liabilities", None)
-        equity = getattr(self, "equity", None)
+    def accounting_equation(self, to_solve):
+        assets, liabilities, equity = symbols("assets, liabilities, equity")
+        accounting_equation = Eq(assets, liabilities + equity)
 
-        if asset is not None and liabilities is not None and equity is None:
-            return f"Equity: {asset - liabilities}"
+        known_values = {symbols(key): value for key, value in self.values.items()}
+        solution = solve(accounting_equation.subs(known_values), symbols(to_solve))
 
-        if asset is not None and liabilities is None and equity is not None:
-            return f"Liabilities: {asset - equity}"
+        if not solution:
+            return field_error
 
-        if asset is None and liabilities is not None and equity is not None:
-            return f"Assets: {liabilities + equity}"
+        return f"${solution[0]:.02f}"
 
-        return ValueError("Not enough information given or all fields are already known.")
-
-    @property
     def accounting_expanded_equation(self):
-        pass
+        return field_error
 
-# creating an object instance test
-test = FundamentalEquations(assets=10000, liabilities=1000, equity=9000)
-print(test.accounting_equation)
+# creating an object instance test, to be deleted once GUI is completed
+test = FundamentalEquations(liabilities=1000, equity=9000)
+print(test.accounting_equation("assets"))
 
-class IncomeStatement(FormulaGroup):
+
+class IncomeStatement(FormulaModel):
     def net_sales(self):
-        return None
+        return field_error
 
     def cost_of_goods_sold(self):
-        return None
+        return field_error
 
     def gross_profit(self):
-        return None
+        return field_error
 
     def operating_income(self):
-        return None
+        return field_error
 
     def net_income(self):
-        return None
+        return field_error
 
 
-class BalanceSheet(FormulaGroup):
+class BalanceSheet(FormulaModel):
     def working_capital(self):
-        return None
+        return field_error
 
     def asset_book_value(self):
-        return None
+        return field_error
 
     def total_equity(self):
-        return None
+        return field_error
 
-class CashFlow(FormulaGroup):
+class CashFlow(FormulaModel):
     def free_cash_flow(self):
-        return None
+        return field_error
 
     def cash_conversion_cycle(self):
-        return None
+        return field_error
 
 
-class ProfitabilityRatios(FormulaGroup):
+class ProfitabilityRatios(FormulaModel):
     def profit_margin(self):
-        return None
+        return field_error
 
     def gross_margin(self):
-        return None
+        return field_error
 
     def return_on_assets(self):
-        return None
+        return field_error
 
     def return_on_equity(self):
-        return None
+        return field_error
 
     def earnings_per_share(self):
-        return None
+        return field_error
 
     def price_to_earnings(self):
-        return None
+        return field_error
 
 
-class LiquidityRatios(FormulaGroup):
+class LiquidityRatios(FormulaModel):
     def current(self):
-        return None
+        return field_error
 
     def quick(self):
-        return None
+        return field_error
 
     def cash(self):
-        return None
+        return field_error
 
 
-class SolvencyRatios(FormulaGroup):
+class SolvencyRatios(FormulaModel):
     def debt(self):
-        return None
+        return field_error
 
     def debt_to_equity(self):
-        return None
+        return field_error
 
     def times_interest_earned(self):
-        return None
+        return field_error
 
     def equity_multiplier(self):
-        return None
+        return field_error
 
 
-class EfficiencyRatios(FormulaGroup):
+class EfficiencyRatios(FormulaModel):
     def inventory_turnover(self):
-        return None
+        return field_error
 
     def accounts_receivable_turnover(self):
-        return None
+        return field_error
 
     def accounts_payable_turnover(self):
-        return None
+        return field_error
 
     def days_sales_in_inventory(self):
-        return None
+        return field_error
 
     def days_sales_outstanding(self):
-        return None
+        return field_error
 
     def days_payables_outstanding(self):
-        return None
+        return field_error
 
     def asset_turnover(self):
-        return None
+        return field_error
 
 
 class StraightLine(DepreciationMethods):
     def depreciation_expense(self):
-        return None
+        return field_error
 
 
 class DoubleDecliningBalance(DepreciationMethods):
     def depreciation_expense(self):
-        return None
+        return field_error
 
 
 class UnitsOfProduction(DepreciationMethods):
     def depreciation_expense(self):
-        return None
+        return field_error
