@@ -11,10 +11,8 @@ class FormulaModel:
     def solve(self, target):
         to_solve = self.variables[target]
 
-        # Substitution mapping
         known_values = {self.variables[key]: value for key, value in self.values.items()}
 
-        # Filtering valid equation, if any
         relevant_equations = []
         for equation in self.equations:
             if to_solve in equation.free_symbols:
@@ -25,13 +23,9 @@ class FormulaModel:
         if not relevant_equations:
             return ValueError("Insufficient information given.")
 
-        # Substituting all given values into given equation
         known_values = [equation.subs(known_values) for equation in relevant_equations]
-
-        # Calculation
         solution = solve(known_values[0], to_solve)
 
-        # User-input error handling
         if not solution:
             return ValueError("Insufficient information given or desired variable is already known.")
         if isinstance(solution, list):
@@ -57,175 +51,175 @@ class DepreciationMethods:
 # --- Derived Classes --- #
 class FundamentalEquations(FormulaModel):
     variables = {
-        "assets": symbols("assets"),
-        "liabilities": symbols("liabilities"),
-        "equity": symbols("equity"),
-        "common_stock": symbols("common_stock"),
-        "dividends": symbols("dividends"),
-        "revenues": symbols("revenues"),
-        "expenses": symbols("expenses")
+        "Assets": symbols("assets"),
+        "Liabilities": symbols("liabilities"),
+        "Equity": symbols("equity"),
+        "Common Stock": symbols("common_stock"),
+        "Dividends": symbols("dividends"),
+        "Revenues": symbols("revenues"),
+        "Expenses": symbols("expenses")
     }
     equations = [
-        Eq(variables["assets"], variables["liabilities"] + variables["equity"]),
-        Eq(variables["equity"], variables["common_stock"] + variables["revenues"] - variables["expenses"]- variables["dividends"])
+        Eq(variables["Assets"], variables["Liabilities"] + variables["Equity"]),
+        Eq(variables["Equity"], variables["Common Stock"] + variables["Revenues"] - variables["Expenses"]- variables["Dividends"])
     ]
 
 
 class IncomeStatement(FormulaModel):
     variables = {
-        "net_income": symbols("net_income"),
-        "net_sales": symbols("net_sales"),
-        "gross_sales": symbols("gross_sales"),
-        "gross_profit": symbols("gross_profit"),
-        "sales_return": symbols("sales_return"),
-        "sales_allowances": symbols("sales_allowances"),
-        "sales_discounts": symbols("sales_discounts"),
-        "cost_of_goods_sold": symbols("cost_of_goods_sold"),
-        "purchases": symbols("purchases"),
-        "beginning_inventory": symbols("beginning_inventory"),
-        "ending_inventory": symbols("ending_inventory"),
-        "operating_income": symbols("operating_income"),
-        "operating_expenses": symbols("operating_expenses"),
-        "revenues": symbols("revenues"),
-        "expenses": symbols("expenses")
+        "Net Income": symbols("net_income"),
+        "Net Sales": symbols("net_sales"),
+        "Gross Sales": symbols("gross_sales"),
+        "Gross Profit": symbols("gross_profit"),
+        "Sales Return": symbols("sales_return"),
+        "Sales Allowances": symbols("sales_allowances"),
+        "Sales Discounts": symbols("sales_discounts"),
+        "Cost of Goods Sold": symbols("cost_of_goods_sold"),
+        "Purchases": symbols("purchases"),
+        "Beginning Inventory": symbols("beginning_inventory"),
+        "Ending Inventory": symbols("ending_inventory"),
+        "Operating Income": symbols("operating_income"),
+        "Operating Expenses": symbols("operating_expenses"),
+        "Revenues": symbols("revenues"),
+        "Expenses": symbols("expenses")
     }
     equations = [
-        Eq(variables["net_sales"], variables["gross_sales"] - variables["sales_return"] - variables["sales_allowances"] - variables["sales_discounts"]),
-        Eq(variables["cost_of_goods_sold"], variables["beginning_inventory"] + variables["purchases"] - variables["ending_inventory"]),
-        Eq(variables["gross_profit"], variables["net_sales"] - variables["cost_of_goods_sold"]),
-        Eq(variables["operating_income"], variables["gross_profit"] - variables["operating_expenses"]),
-        Eq(variables["net_income"], variables["revenues"] - variables["expenses"])
+        Eq(variables["Net Sales"], variables["Gross Sales"] - variables["Sales Return"] - variables["Sales Allowances"] - variables["Sales Discounts"]),
+        Eq(variables["Cost of Goods Sold"], variables["Beginning Inventory"] + variables["Purchases"] - variables["Ending Inventory"]),
+        Eq(variables["Gross Profit"], variables["Net Sales"] - variables["Cost of Goods Sold"]),
+        Eq(variables["Operating Income"], variables["Gross Profit"] - variables["Operating Expenses"]),
+        Eq(variables["Net Income"], variables["Revenues"] - variables["Expenses"])
     ]
 
 
 class BalanceSheet(FormulaModel):
     variables = {
-        "working_capital": symbols("working_capital"),
-        "additional_paid_capital": symbols("additional_paid_capital"),
-        "asset_cost": symbols("asset_cost"),
-        "asset_book_value": symbols("asset_book_value"),
-        "accumulated_depreciation": symbols("accumulated_depreciation"),
-        "current_assets": symbols("current_assets"),
-        "current_liabilities": symbols("current_liabilities"),
-        "total_equity": symbols("total_equity"),
-        "retained_earnings": symbols("retained_earnings"),
-        "common_stock": symbols("common_stock"),
-        "treasury_stock": symbols("treasury_stock")
+        "Working Capital": symbols("working_capital"),
+        "Additional Paid Capital": symbols("additional_paid_capital"),
+        "Asset Cost": symbols("asset_cost"),
+        "Asset Book Value": symbols("asset_book_value"),
+        "Accumulated Depreciation": symbols("accumulated_depreciation"),
+        "Current Assets": symbols("current_assets"),
+        "Current Liabilities": symbols("current_liabilities"),
+        "Total Equity": symbols("total_equity"),
+        "Retained Earnings": symbols("retained_earnings"),
+        "Common Stock": symbols("common_stock"),
+        "Treasury Stock": symbols("treasury_stock")
     }
     equations = [
-        Eq(variables["working_capital"], variables["current_assets"] - variables["current_liabilities"]),
-        Eq(variables["asset_book_value"], variables["asset_cost"] - variables["accumulated_depreciation"]),
-        Eq(variables["total_equity"], variables["common_stock"] + variables["retained_earnings"] + variables["additional_paid_capital"] - variables["treasury_stock"])
+        Eq(variables["Working Capital"], variables["Current Assets"] - variables["Current Liabilities"]),
+        Eq(variables["Asset Book Value"], variables["Asset Cost"] - variables["Accumulated Depreciation"]),
+        Eq(variables["Total Equity"], variables["Common Stock"] + variables["Retained Earnings"] + variables["Additional Paid Capital"] - variables["Treasury Stock"])
     ]
 
 
 class CashFlow(FormulaModel):
     variables = {
-        "free_cash_flow": symbols("free_cash_flow"),
-        "operating_cash_flow": symbols("operating_cash_flow"),
-        "capital_expenditures": symbols("capital_expenditures"),
-        "cash_conversion_cycle": symbols("cash_conversion_cycle"),
-        "days_inventory_outstanding": symbols("days_inventory_outstanding"),
-        "days_sales_outstanding": symbols("days_sales_outstanding"),
-        "days_payable_outstanding": symbols("days_payable_outstanding")
+        "Free Cash Flow": symbols("free_cash_flow"),
+        "Operating Cash Flow": symbols("operating_cash_flow"),
+        "Capital Expenditures": symbols("capital_expenditures"),
+        "Cash Conversion Cycle": symbols("cash_conversion_cycle"),
+        "Days Inventory Outstanding": symbols("days_inventory_outstanding"),
+        "Days Sales Outstanding": symbols("days_sales_outstanding"),
+        "Days Payable Outstanding": symbols("days_payable_outstanding")
     }
     equations = [
-        Eq(variables["free_cash_flow"], variables["operating_cash_flow"] - variables["capital_expenditures"]),
-        Eq(variables["cash_conversion_cycle"], variables["days_inventory_outstanding"] + variables["days_sales_outstanding"] - variables["days_payable_outstanding"])
+        Eq(variables["Free Cash Flow"], variables["Operating Cash Flow"] - variables["Capital Expenditures"]),
+        Eq(variables["Cash Conversion Cycle"], variables["Days Inventory Outstanding"] + variables["Days Sales Outstanding"] - variables["Days Payable Outstanding"])
     ]
 
 
 class ProfitabilityRatios(FormulaModel):
     variables = {
-        "net_income": symbols("net_income"),
-        "net_sales": symbols("net_sales"),
-        "gross_profit": symbols("gross_profit"),
-        "profit_margin": symbols("profit_margin"),
-        "gross_margin": symbols("gross_margin"),
-        "return_on_assets": symbols("return_on_assets"),
-        "return_on_equity": symbols("return_on_equity"),
-        "earnings_per_share": symbols("earnings_per_share"),
-        "price_to_earning_ratio": symbols("price_to_earning_ratio"),
-        "average_total_assets": symbols("average_total_assets"),
-        "average_stockholders_equity": symbols("average_stockholders_equity"),
-        "preferred_dividends": symbols("preferred_dividends"),
-        "market_price_per_share": symbols("market_price_per_share"),
-        "weighted_average_common_shares": symbols("weighted_average_common_shares"),
+        "Net Income": symbols("net_income"),
+        "Net Sales": symbols("net_sales"),
+        "Gross Profit": symbols("gross_profit"),
+        "Gross Margin": symbols("gross_margin"),
+        "Profit Margin": symbols("profit_margin"),
+        "Return On Assets": symbols("return_on_assets"),
+        "Return On Equity": symbols("return_on_equity"),
+        "Earnings Per Share": symbols("earnings_per_share"),
+        "Price to Earning Ratio": symbols("price_to_earning_ratio"),
+        "Average Total Assets": symbols("average_total_assets"),
+        "Average Stockholders Equity": symbols("average_stockholders_equity"),
+        "Preferred Dividends": symbols("preferred_dividends"),
+        "Market Price Per Share": symbols("market_price_per_share"),
+        "Weighted Average Common Shares": symbols("weighted_average_common_shares"),
     }
     equations = [
-        Eq(variables["profit_margin"], (variables["net_income"] / variables["net_sales"]) * 100),
-        Eq(variables["gross_margin"], (variables["gross_profit"] / variables["net_sales"]) * 100),
-        Eq(variables["return_on_assets"], (variables["net_income"] / variables["average_total_assets"]) * 100),
-        Eq(variables["return_on_equity"], (variables["net_income"] / variables["average_stockholders_equity"]) * 100),
-        Eq(variables["earnings_per_share"], (variables["net_income"] - variables["preferred_dividends"]) / variables["weighted_average_common_shares"]),
-        Eq(variables["price_to_earning_ratio"], variables["market_price_per_share"] / variables["earnings_per_share"])
+        Eq(variables["Profit Margin"], (variables["Net Income"] / variables["Net Sales"]) * 100),
+        Eq(variables["Gross Margin"], (variables["Gross Profit"] / variables["Net Sales"]) * 100),
+        Eq(variables["Return On Assets"], (variables["Net Income"] / variables["Average Total Assets"]) * 100),
+        Eq(variables["Return On Equity"], (variables["Net Income"] / variables["Average Stockholders Equity"]) * 100),
+        Eq(variables["Earnings Per Share"], (variables["Net Income"] - variables["Preferred Dividends"]) / variables["Weighted Average Common Shares"]),
+        Eq(variables["Price to Earning Ratio"], variables["Market Price Per Share"] / variables["Earnings Per Share"])
     ]
 
 
 class LiquidityRatios(FormulaModel):
     variables = {
-        "current_ratio": symbols("current_ratio"),
-        "current_assets": symbols("current_assets"),
-        "current_liabilities": symbols("current_liabilities"),
-        "quick_ratio": symbols("quick_ratio"),
-        "cash_ratio": symbols("cash_ratio"),
-        "cash": symbols("cash"),
-        "cash_equivalents": symbols("cash_equivalents"),
-        "accounts_receivables": symbols("accounts_receivables"),
-        "marketable_securities": symbols("marketable_securities"),
+        "Current Ratio": symbols("current_ratio"),
+        "Current Assets": symbols("current_assets"),
+        "Current Liabilities": symbols("current_liabilities"),
+        "Quick Ratio": symbols("quick_ratio"),
+        "Cash Ratio": symbols("cash_ratio"),
+        "Cash": symbols("cash"),
+        "Cash Equivalents": symbols("cash_equivalents"),
+        "Accounts Receivables": symbols("accounts_receivables"),
+        "Marketable Securities": symbols("marketable_securities"),
     }
     equations = [
-        Eq(variables["current_ratio"], variables["current_assets"] / variables["current_liabilities"]),
-        Eq(variables["quick_ratio"], (variables["cash"] + variables["marketable_securities"] + variables["accounts_receivables"]) / variables["current_liabilities"]),
-        Eq(variables["cash_ratio"], (variables["cash"] + variables["cash_equivalents"]) / variables["current_liabilities"])
+        Eq(variables["Current Ratio"], variables["Current Assets"] / variables["Current Liabilities"]),
+        Eq(variables["Quick Ratio"], (variables["Cash"] + variables["Marketable Securities"] + variables["Accounts Receivables"]) / variables["Current Liabilities"]),
+        Eq(variables["Cash Ratio"], (variables["Cash"] + variables["Cash Equivalents"]) / variables["Current Liabilities"])
     ]
 
 
 class SolvencyRatios(FormulaModel):
     variables = {
-        "total_assets": symbols("total_assets"),
-        "total_liabilities": symbols("total_liabilities"),
-        "total_equity": symbols("total_equity"),
-        "debt_ratio": symbols("debt_ratio"),
-        "debt_to_equity_ratio": symbols("debt_to_equity_ratio"),
-        "times_interest_earned": symbols("times_interest_earned"),
-        "equity_multiplier": symbols("equity_multiplier"),
-        "income_before_interest_and_taxes": symbols("income_before_interest_and_taxes"),
-        "interest_expense": symbols("interest_expense")
+        "Total Assets": symbols("total_assets"),
+        "Total Liabilities": symbols("total_liabilities"),
+        "Total Equity": symbols("total_equity"),
+        "Debt Ratio": symbols("debt_ratio"),
+        "Debt to Equity Ratio": symbols("debt_to_equity_ratio"),
+        "Times Interest Earned": symbols("times_interest_earned"),
+        "Equity Multiplier": symbols("equity_multiplier"),
+        "Income Before Interest & Taxes": symbols("income_before_interest_and_taxes"),
+        "Interest Expense": symbols("interest_expense")
     }
     equations = [
-        Eq(variables["debt_ratio"], (variables["total_liabilities"] / variables["total_assets"]) * 100),
-        Eq(variables["debt_to_equity_ratio"], (variables["total_liabilities"] / variables["total_equity"]) * 100),
-        Eq(variables["times_interest_earned"], variables["income_before_interest_and_taxes"] / variables["interest_expense"]),
-        Eq(variables["equity_multiplier"], variables["total_assets"] / variables["total_equity"])
+        Eq(variables["Debt Ratio"], (variables["Total Liabilities"] / variables["Total Assets"]) * 100),
+        Eq(variables["Debt to Equity Ratio"], (variables["Total Liabilities"] / variables["Total Equity"]) * 100),
+        Eq(variables["Times Interest Earned"], variables["Income Before Interest & Taxes"] / variables["Interest Expense"]),
+        Eq(variables["Equity Multiplier"], variables["Total Assets"] / variables["Total Equity"])
     ]
 
 
 class EfficiencyRatios(FormulaModel):
     variables = {
-        "asset_turnover": symbols("asset_turnover"),
-        "inventory_turnover": symbols("inventory_turnover"),
-        "accounts_receivable_turnover": symbols("accounts_receivable_turnover"),
-        "accounts_payable_turnover": symbols("accounts_payable_turnover"),
-        "days_sales_in_inventory": symbols("days_sales_in_inventory"),
-        "days_sales_outstanding": symbols("days_sales_outstanding"),
-        "days_payables_outstanding": symbols("days_payables_outstanding"),
-        "cost_of_goods_sold": symbols("cost_of_goods_sold"),
-        "net_sales": symbols("net_sales"),
-        "net_credit_sales": symbols("net_credit_sales"),
-        "average_inventory": symbols("average_inventory"),
-        "average_accounts_receivable": symbols("average_accounts_receivable"),
-        "average_accounts_payable": symbols("average_accounts_payable"),
-        "average_total_assets": symbols("average_total_assets")
+        "Asset Turnover": symbols("asset_turnover"),
+        "Inventory Turnover": symbols("inventory_turnover"),
+        "Accounts Receivable Turnover": symbols("accounts_receivable_turnover"),
+        "Accounts Payable Turnover": symbols("accounts_payable_turnover"),
+        "Days Sales in Inventory": symbols("days_sales_in_inventory"),
+        "Days Sales Outstanding": symbols("days_sales_outstanding"),
+        "Days Payables Outstanding": symbols("days_payables_outstanding"),
+        "Cost of Goods Sold": symbols("cost_of_goods_sold"),
+        "Net Sales": symbols("net_sales"),
+        "Net Credit Sales": symbols("net_credit_sales"),
+        "Average Inventory": symbols("average_inventory"),
+        "Average Accounts Receivable": symbols("average_accounts_receivable"),
+        "Average Accounts Payable": symbols("average_accounts_payable"),
+        "Average Total Assets": symbols("average_total_assets")
     }
     equations = [
-        Eq(variables["inventory_turnover"], variables["cost_of_goods_sold"] / variables["average_inventory"]),
-        Eq(variables["accounts_receivable_turnover"], variables["net_credit_sales"] / variables["average_accounts_receivable"]),
-        Eq(variables["accounts_payable_turnover"], variables["cost_of_goods_sold"] / variables["average_accounts_payable"]),
-        Eq(variables["days_sales_in_inventory"], 365 / variables["inventory_turnover"]),
-        Eq(variables["days_sales_outstanding"], 365 / variables["accounts_receivable_turnover"]),
-        Eq(variables["days_payables_outstanding"], 365 / variables["accounts_payable_turnover"]),
-        Eq(variables["asset_turnover"], variables["net_sales"] / variables["average_total_assets"]),
+        Eq(variables["Inventory Turnover"], variables["Cost of Goods Sold"] / variables["Average Inventory"]),
+        Eq(variables["Accounts Receivable Turnover"], variables["Net Credit Sales"] / variables["Average Accounts Receivable"]),
+        Eq(variables["Accounts Payable Turnover"], variables["Cost of Goods Sold"] / variables["Average Accounts Payable"]),
+        Eq(variables["Days Sales in Inventory"], 365 / variables["Inventory Turnover"]),
+        Eq(variables["Days Sales Outstanding"], 365 / variables["Accounts Receivable Turnover"]),
+        Eq(variables["Days Payables Outstanding"], 365 / variables["Accounts Payable Turnover"]),
+        Eq(variables["Asset Turnover"], variables["Net Sales"] / variables["Average Total Assets"])
     ]
 
 
