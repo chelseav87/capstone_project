@@ -7,9 +7,9 @@ HEIGHT = 600
 
 formula_classes = {
     "Fundamental Equations": FundamentalEquations,
-    "Income Statement Formulas": IncomeStatement,
-    "Balance Sheet Formulas": BalanceSheet,
-    "Cash Flow Formulas": CashFlow,
+    "Income Statement": IncomeStatement,
+    "Balance Sheet": BalanceSheet,
+    "Cash Flow": CashFlow,
     "Profitability Ratios": ProfitabilityRatios,
     "Liquidity Ratios": LiquidityRatios,
     "Solvency Ratios": SolvencyRatios,
@@ -20,11 +20,12 @@ formula_classes = {
 def create_formula_tab(parent_tab, label, formula_group):
     frame = tk.Frame(parent_tab)
     tk.Label(frame, text=label, font=("Helvetica", 12, "bold")).pack(pady=10)
+    variables = list(formula_group.variables.keys())
 
     # Variable to Solve Prompt
     tk.Label(frame, text="Solving for:").pack()
     selected_variable = tk.StringVar(value="...")
-    options = ttk.OptionMenu(frame, selected_variable, "...", *list(formula_group.variables.keys()))
+    options = ttk.OptionMenu(frame, selected_variable, "...", *variables)
     options.pack(pady=5)
 
     # Input Prompts
@@ -33,11 +34,11 @@ def create_formula_tab(parent_tab, label, formula_group):
 
     inputted_values = {}
 
-    for variable in formula_group.variables.keys():
+    for variable in variables:
         grid_row = tk.Frame(input_row)
         grid_row.pack(fill="x", pady=2)
 
-        tk.Label(grid_row, text=variable, width=25, anchor="w").pack(side="left")
+        tk.Label(grid_row, text=variable, width=30, anchor="w").pack(side="left")
 
         entry_row = tk.Entry(grid_row)
         entry_row.pack(side="left", fill="x", expand=True)
