@@ -238,7 +238,7 @@ class DoubleDecliningBalance(DepreciationMethods):
     def depreciation_expense(self, year_end):
         double_declining_rate = 2 / self.useful_life
         book_value = self.asset_cost * ((1-double_declining_rate) ** (year_end - 1))
-        return book_value * double_declining_rate
+        return f"{(book_value * double_declining_rate):.02f}"
 
 
 class UnitsOfProduction(DepreciationMethods):
@@ -248,4 +248,4 @@ class UnitsOfProduction(DepreciationMethods):
 
     def depreciation_expense(self, units_produced):
         depreciation_per_unit = (self.asset_cost - self.salvage_value) / self.total_units
-        return depreciation_per_unit * units_produced
+        return f"{(depreciation_per_unit * units_produced):.02f}"
