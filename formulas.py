@@ -20,21 +20,13 @@ class FormulaModel:
                 if all(variable in known_values for variable in invalid_variables):
                     relevant_equations.append(equation)
 
-        if not relevant_equations:
-            return ValueError("Insufficient information given.")
-
         known_values = [equation.subs(known_values) for equation in relevant_equations]
         solution = solve(known_values[0], to_solve)
 
-        if not solution:
-            return ValueError("Insufficient information given or desired variable is already known.")
         if isinstance(solution, list):
             solution = solution[0]
         if isinstance(solution, dict):
             solution = solution[to_solve]
-        if hasattr(solution, "free_symbols") and solution.free_symbols:
-            return ValueError("Insufficient information given or desired variable is already known.")
-
         return solution
 
 
