@@ -1,4 +1,5 @@
 import tkinter as tk
+from formulas import *
 
 root = tk.Tk()
 root.title("Financial Calculator")
