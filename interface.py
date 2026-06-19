@@ -86,12 +86,13 @@ def create_formula_tab(parent_tab, label, formula_group):
 def create_depreciation_tab(parent_tab):
     frame = tk.Frame(parent_tab)
     tk.Label(frame, text="Depreciation Methods", font=("Helvetica", 12, "bold")).pack(pady=10)
+    variables = list(depreciation_classes.keys())
 
     # Method to Solve
-    tk.Label(frame, text="Choose depreciation method:").pack()
-    selected_method = tk.StringVar(value=list(depreciation_classes.keys())[0])
+    tk.Label(frame, text="Choose method:").pack()
+    selected_method = tk.StringVar(value=variables[0])
     depreciation_methods = depreciation_classes[selected_method.get()]
-    options = ttk.OptionMenu(frame, selected_method, "...", *depreciation_classes.keys())
+    options = ttk.OptionMenu(frame, selected_method, "...", *variables)
     options.pack(pady=5)
 
     # Input Prompts
@@ -137,7 +138,7 @@ def create_depreciation_tab(parent_tab):
         except:
             result_label.config(text="Insufficient information given.")
 
-    tk.Button(frame, text="Solve", command=calculate).pack(pady=10)
+    tk.Button(frame, text="Calculate", command=calculate).pack(pady=10)
 
     result_label = tk.Label(frame, text="", font=("Helvetica", 8))
     result_label.pack(pady=10)
@@ -158,8 +159,10 @@ tab_labels = {}
 for tab_name, formula_class in formula_classes.items():
     tab = ttk.Frame(notebook)
     notebook.add(tab, text=tab_name)
-
     create_formula_tab(tab, tab_name, formula_class).pack(fill="both", expand=True)
-    create_depreciation_tab(tab).pack(fill="both", expand=True)
+
+tab_dm = ttk.Frame(notebook)
+notebook.add(tab_dm, text="Depreciation Methods")
+create_depreciation_tab(tab_dm).pack(fill="both", expand=True)
 
 root.mainloop()
