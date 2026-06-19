@@ -176,6 +176,8 @@ def create_depreciation_tab(parent_tab):
             result_label.config(text=f"Depreciation Expense = {result:.02f}")
         except TypeError:
             result_label.config(text="Insufficient information given.")
+        except KeyError:
+            result_label.config(text="Insufficient information given.")
         except ZeroDivisionError:
             result_label.config(text="Cannot divide by zero.")
 
