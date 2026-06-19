@@ -51,6 +51,20 @@ def create_formula_tab(parent_tab, label, formula_group):
 
         inputted_values[variable] = entry_row
 
+    # Update Input Prompts
+    def update_inputs(*args):
+        target_variable = selected_variable.get()
+
+        for variable_value, entry in inputted_values.items():
+            if variable_value == target_variable:
+                entry.delete(0, tk.END)
+                entry.config(state="disabled")
+            else:
+                entry.config(state="normal")
+
+    selected_variable.trace_add("write", update_inputs)
+    update_inputs()
+
     def calculate():
         target_variable = selected_variable.get()
         if target_variable == "...":

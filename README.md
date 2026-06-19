@@ -10,3 +10,4 @@ Run "interface.py". Ensure that SymPy (sympy) is installed before execution.
 - https://www.geeksforgeeks.org/python/python-getting-started-with-sympy-module/
 - https://docs.sympy.org/latest/tutorials/intro-tutorial/index.html#intro-tutorial
 - https://stackoverflow.com/questions/46909169/python-tkinter-side-notebook-tabs
+- https://stackoverflow.com/questions/5308142/how-to-detect-when-an-optionmenu-or-checkbutton-change
