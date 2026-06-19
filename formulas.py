@@ -139,10 +139,10 @@ class ProfitabilityRatios(FormulaModel):
         "Weighted Average Common Shares": symbols("weighted_average_common_shares"),
     }
     equations = [
-        Eq(variables["Profit Margin"], (variables["Net Income"] / variables["Net Sales"]) * 100),
-        Eq(variables["Gross Margin"], (variables["Gross Profit"] / variables["Net Sales"]) * 100),
-        Eq(variables["Return On Assets"], (variables["Net Income"] / variables["Average Total Assets"]) * 100),
-        Eq(variables["Return On Equity"], (variables["Net Income"] / variables["Average Stockholders Equity"]) * 100),
+        Eq(variables["Profit Margin"], variables["Net Income"] / variables["Net Sales"]),
+        Eq(variables["Gross Margin"], variables["Gross Profit"] / variables["Net Sales"]),
+        Eq(variables["Return On Assets"], variables["Net Income"] / variables["Average Total Assets"]),
+        Eq(variables["Return On Equity"], variables["Net Income"] / variables["Average Stockholders Equity"]),
         Eq(variables["Earnings Per Share"], (variables["Net Income"] - variables["Preferred Dividends"]) / variables["Weighted Average Common Shares"]),
         Eq(variables["Price to Earning Ratio"], variables["Market Price Per Share"] / variables["Earnings Per Share"])
     ]
@@ -157,12 +157,12 @@ class LiquidityRatios(FormulaModel):
         "Cash Ratio": symbols("cash_ratio"),
         "Cash": symbols("cash"),
         "Cash Equivalents": symbols("cash_equivalents"),
-        "Accounts Receivables": symbols("accounts_receivables"),
+        "Accounts Receivable": symbols("accounts_receivable"),
         "Marketable Securities": symbols("marketable_securities"),
     }
     equations = [
         Eq(variables["Current Ratio"], variables["Current Assets"] / variables["Current Liabilities"]),
-        Eq(variables["Quick Ratio"], (variables["Cash"] + variables["Marketable Securities"] + variables["Accounts Receivables"]) / variables["Current Liabilities"]),
+        Eq(variables["Quick Ratio"], (variables["Cash"] + variables["Marketable Securities"] + variables["Accounts Receivable"]) / variables["Current Liabilities"]),
         Eq(variables["Cash Ratio"], (variables["Cash"] + variables["Cash Equivalents"]) / variables["Current Liabilities"])
     ]
 
@@ -180,8 +180,8 @@ class SolvencyRatios(FormulaModel):
         "Interest Expense": symbols("interest_expense")
     }
     equations = [
-        Eq(variables["Debt Ratio"], (variables["Total Liabilities"] / variables["Total Assets"]) * 100),
-        Eq(variables["Debt to Equity Ratio"], (variables["Total Liabilities"] / variables["Total Equity"]) * 100),
+        Eq(variables["Debt Ratio"], variables["Total Liabilities"] / variables["Total Assets"]),
+        Eq(variables["Debt to Equity Ratio"], variables["Total Liabilities"] / variables["Total Equity"]),
         Eq(variables["Times Interest Earned"], variables["Income Before Interest & Taxes"] / variables["Interest Expense"]),
         Eq(variables["Equity Multiplier"], variables["Total Assets"] / variables["Total Equity"])
     ]
@@ -195,7 +195,7 @@ class EfficiencyRatios(FormulaModel):
         "Accounts Payable Turnover": symbols("accounts_payable_turnover"),
         "Days Sales in Inventory": symbols("days_sales_in_inventory"),
         "Days Sales Outstanding": symbols("days_sales_outstanding"),
-        "Days Payables Outstanding": symbols("days_payables_outstanding"),
+        "Days Payable Outstanding": symbols("days_payable_outstanding"),
         "Cost of Goods Sold": symbols("cost_of_goods_sold"),
         "Net Sales": symbols("net_sales"),
         "Net Credit Sales": symbols("net_credit_sales"),
@@ -210,7 +210,7 @@ class EfficiencyRatios(FormulaModel):
         Eq(variables["Accounts Payable Turnover"], variables["Cost of Goods Sold"] / variables["Average Accounts Payable"]),
         Eq(variables["Days Sales in Inventory"], 365 / variables["Inventory Turnover"]),
         Eq(variables["Days Sales Outstanding"], 365 / variables["Accounts Receivable Turnover"]),
-        Eq(variables["Days Payables Outstanding"], 365 / variables["Accounts Payable Turnover"]),
+        Eq(variables["Days Payable Outstanding"], 365 / variables["Accounts Payable Turnover"]),
         Eq(variables["Asset Turnover"], variables["Net Sales"] / variables["Average Total Assets"])
     ]
 
