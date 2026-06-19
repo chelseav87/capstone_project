@@ -13,16 +13,22 @@ formula_classes = {
     "Profitability Ratios": ProfitabilityRatios,
     "Liquidity Ratios": LiquidityRatios,
     "Solvency Ratios": SolvencyRatios,
-    "Efficiency Ratios": EfficiencyRatios,
-    "Depreciation Methods": None # temp; just different class structure
+    "Efficiency Ratios": EfficiencyRatios
 }
 
+depreciation_classes = {
+    "Straight-Line": StraightLine,
+    "Double-Declining Balance": DoubleDecliningBalance,
+    "Units of Production": UnitsOfProduction
+}
+
+# Notebook Tab UI
 def create_formula_tab(parent_tab, label, formula_group):
     frame = tk.Frame(parent_tab)
     tk.Label(frame, text=label, font=("Helvetica", 12, "bold")).pack(pady=10)
     variables = list(formula_group.variables.keys())
 
-    # Variable to Solve Prompt
+    # Variable to Solve
     tk.Label(frame, text="Solving for:").pack()
     selected_variable = tk.StringVar(value="...")
     options = ttk.OptionMenu(frame, selected_variable, "...", *variables)
@@ -77,6 +83,67 @@ def create_formula_tab(parent_tab, label, formula_group):
 
     return frame
 
+def create_depreciation_tab(parent_tab):
+    frame = tk.Frame(parent_tab)
+    tk.Label(frame, text="Depreciation Methods", font=("Helvetica", 12, "bold")).pack(pady=10)
+
+    # Method to Solve
+    tk.Label(frame, text="Choose depreciation method:").pack()
+    selected_method = tk.StringVar(value=list(depreciation_classes.keys())[0])
+    depreciation_methods = depreciation_classes[selected_method.get()]
+    options = ttk.OptionMenu(frame, selected_method, "...", *depreciation_classes.keys())
+    options.pack(pady=5)
+
+    # Input Prompts
+    input_row = tk.Frame(frame)
+    input_row.pack(pady=15)
+
+    inputted_values = {}
+
+    for variable in depreciation_methods.variables.keys():
+        grid_row = tk.Frame(input_row)
+        grid_row.pack(fill="x", pady=2)
+
+        tk.Label(grid_row, text=variable, width=30, anchor="w").pack(side="left")
+
+        entry_row = tk.Entry(grid_row)
+        entry_row.pack(side="left", fill="x", expand=True)
+
+        inputted_values[variable] = entry_row
+
+    def calculate():
+        values = {}
+
+        for variable_value, entry in inputted_values.items():
+            text = entry.get().strip()
+            if text == "":
+                result_label.config(text="Insufficient information given.")
+                return
+            try:
+                values[variable_value] = float(text)
+            except ValueError:
+                result_label.config(text="Invalid input.")
+                return
+
+        try:
+            if "Year End" in values:
+                result = depreciation_methods.depreciation_expense(values["Year End"])
+            elif "Units Produced" in values:
+                result = depreciation_methods.depreciation_expense(values["Units Produced"])
+            else:
+                result = depreciation_methods.depreciation_expense()
+
+            result_label.config(text=f"Depreciation Expense = {result:.02f}")
+        except:
+            result_label.config(text="Insufficient information given.")
+
+    tk.Button(frame, text="Solve", command=calculate).pack(pady=10)
+
+    result_label = tk.Label(frame, text="", font=("Helvetica", 8))
+    result_label.pack(pady=10)
+
+    return frame
+
 # --- GUI Setup --- #
 root = tk.Tk()
 root.title("Financial Calculator")
@@ -92,10 +159,7 @@ for tab_name, formula_class in formula_classes.items():
     tab = ttk.Frame(notebook)
     notebook.add(tab, text=tab_name)
 
-    # temp for depreciation methods
-    if formula_class is not None:
-        create_formula_tab(tab, tab_name, formula_class).pack(fill="both", expand=True)
-    else:
-        print("depreciation methods here")
+    create_formula_tab(tab, tab_name, formula_class).pack(fill="both", expand=True)
+    create_depreciation_tab(tab).pack(fill="both", expand=True)
 
 root.mainloop()

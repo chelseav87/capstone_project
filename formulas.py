@@ -32,9 +32,9 @@ class FormulaModel:
 
 class DepreciationMethods:
     def __init__(self, asset_cost, salvage_value, useful_life):
-        self.asset_cost = asset_cost
-        self.salvage_value = salvage_value
-        self.useful_life = useful_life
+        self.asset_cost = float(asset_cost)
+        self.salvage_value = float(salvage_value)
+        self.useful_life = float(useful_life)
 
     def depreciation_expense(self, **kwargs):
         return None
@@ -216,22 +216,43 @@ class EfficiencyRatios(FormulaModel):
 
 
 class StraightLine(DepreciationMethods):
+    variables = {
+        "Asset Cost": float,
+        "Salvage Value": float,
+        "Useful Life": int
+    }
+
     def depreciation_expense(self):
-        return f"{((self.asset_cost - self.salvage_value) / self.useful_life):.02f}"
+        return (self.asset_cost - self.salvage_value) / self.useful_life
 
 
 class DoubleDecliningBalance(DepreciationMethods):
+    variables = {
+        "Asset Cost": float,
+        "Salvage Value": float,
+        "Useful Life": int,
+        "Year End": int
+    }
+
     def depreciation_expense(self, year_end):
         double_declining_rate = 2 / self.useful_life
         book_value = self.asset_cost * ((1-double_declining_rate) ** (year_end - 1))
-        return f"{(book_value * double_declining_rate):.02f}"
+        return book_value * double_declining_rate
 
 
 class UnitsOfProduction(DepreciationMethods):
+    variables = {
+        "Asset Cost": float,
+        "Salvage Value": float,
+        "Useful Life": int,
+        "Total Units": int,
+        "Units Produced": int
+    }
+
     def __init__(self, asset_cost, salvage_value, useful_life, total_units):
         super().__init__(asset_cost, salvage_value, useful_life)
         self.total_units = total_units
 
     def depreciation_expense(self, units_produced):
         depreciation_per_unit = (self.asset_cost - self.salvage_value) / self.total_units
-        return f"{(depreciation_per_unit * units_produced):.02f}"
+        return depreciation_per_unit * units_produced

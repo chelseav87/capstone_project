@@ -1,6 +1,6 @@
 # ISC4U Culminating: Capstone Project
 
-Run "interface.py". Ensure that SymPy (sympy) is installed.
+Run "interface.py". Ensure that SymPy (sympy) is installed before execution.
 
 ## References:
 - ISC3U Unit 2: Tkinter Project
