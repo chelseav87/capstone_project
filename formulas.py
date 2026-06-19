@@ -216,24 +216,11 @@ class EfficiencyRatios(FormulaModel):
 
 
 class StraightLine(DepreciationMethods):
-    variables = {
-        "Asset Cost": float,
-        "Salvage Value": float,
-        "Useful Life": int
-    }
-
     def depreciation_expense(self):
         return (self.asset_cost - self.salvage_value) / self.useful_life
 
 
 class DoubleDecliningBalance(DepreciationMethods):
-    variables = {
-        "Asset Cost": float,
-        "Salvage Value": float,
-        "Useful Life": int,
-        "Year End": int
-    }
-
     def depreciation_expense(self, year_end):
         double_declining_rate = 2 / self.useful_life
         book_value = self.asset_cost * ((1-double_declining_rate) ** (year_end - 1))
@@ -241,14 +228,6 @@ class DoubleDecliningBalance(DepreciationMethods):
 
 
 class UnitsOfProduction(DepreciationMethods):
-    variables = {
-        "Asset Cost": float,
-        "Salvage Value": float,
-        "Useful Life": int,
-        "Total Units": int,
-        "Units Produced": int
-    }
-
     def __init__(self, asset_cost, salvage_value, useful_life, total_units):
         super().__init__(asset_cost, salvage_value, useful_life)
         self.total_units = total_units

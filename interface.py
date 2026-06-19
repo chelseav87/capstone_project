@@ -30,7 +30,7 @@ def create_formula_tab(parent_tab, label, formula_group):
 
     # Variable to Solve
     tk.Label(frame, text="Solving for:").pack()
-    selected_variable = tk.StringVar(value="...")
+    selected_variable = tk.StringVar(value=variables[0])
     options = ttk.OptionMenu(frame, selected_variable, "...", *variables)
     options.pack(pady=5)
 
@@ -53,8 +53,11 @@ def create_formula_tab(parent_tab, label, formula_group):
 
     def calculate():
         target_variable = selected_variable.get()
-        values = {}
+        if target_variable == "...":
+            result_label.config(text="Please select a variable to solve for.")
+            return
 
+        values = {}
         for variable_value, entry in inputted_values.items():
             if variable_value == target_variable:
                 continue
@@ -73,7 +76,7 @@ def create_formula_tab(parent_tab, label, formula_group):
             formula = formula_group(**values)
             result = formula.solve(target_variable)
             result_label.config(text=f"{target_variable} = {result:.02f}")
-        except:
+        except IndexError:
             result_label.config(text="Insufficient information given.")
 
     tk.Button(frame, text="Solve", command=calculate).pack(pady=10)
@@ -83,16 +86,16 @@ def create_formula_tab(parent_tab, label, formula_group):
 
     return frame
 
+
 def create_depreciation_tab(parent_tab):
     frame = tk.Frame(parent_tab)
     tk.Label(frame, text="Depreciation Methods", font=("Helvetica", 12, "bold")).pack(pady=10)
-    variables = list(depreciation_classes.keys())
+    methods = list(depreciation_classes.keys())
 
     # Method to Solve
     tk.Label(frame, text="Choose method:").pack()
-    selected_method = tk.StringVar(value=variables[0])
-    depreciation_methods = depreciation_classes[selected_method.get()]
-    options = ttk.OptionMenu(frame, selected_method, "...", *variables)
+    selected_method = tk.StringVar(value=methods[0])
+    options = ttk.OptionMenu(frame, selected_method, "...", *methods)
     options.pack(pady=5)
 
     # Input Prompts
@@ -101,7 +104,16 @@ def create_depreciation_tab(parent_tab):
 
     inputted_values = {}
 
-    for variable in depreciation_methods.variables.keys():
+    variable_names = {
+        "Asset Cost": "asset_cost",
+        "Salvage Value": "salvage_value",
+        "Useful Life": "useful_life",
+        "Year End": "year_end",
+        "Total Units": "total_units",
+        "Units Produced": "units_produced"
+    }
+
+    for variable in variable_names.keys():
         grid_row = tk.Frame(input_row)
         grid_row.pack(fill="x", pady=2)
 
@@ -113,30 +125,46 @@ def create_depreciation_tab(parent_tab):
         inputted_values[variable] = entry_row
 
     def calculate():
-        values = {}
+        method_name = selected_method.get()
+        if method_name == "...":
+            result_label.config(text="Please select a depreciation method.")
+            return
+        method_class = depreciation_classes[method_name]
 
-        for variable_value, entry in inputted_values.items():
-            text = entry.get().strip()
+        values = {}
+        for variable_value in variable_names:
+            text = inputted_values[variable_value].get().strip()
             if text == "":
-                result_label.config(text="Insufficient information given.")
-                return
+                continue
             try:
-                values[variable_value] = float(text)
+                values[variable_names[variable_value]] = float(text)
             except ValueError:
                 result_label.config(text="Invalid input.")
                 return
 
         try:
-            if "Year End" in values:
-                result = depreciation_methods.depreciation_expense(values["Year End"])
-            elif "Units Produced" in values:
-                result = depreciation_methods.depreciation_expense(values["Units Produced"])
-            else:
-                result = depreciation_methods.depreciation_expense()
+            result = None
+
+            # Instantiate Method
+            initialize_parameters = method_class.__init__.__code__.co_varnames
+            initialize_values = {key: value for key, value in values.items() if key in initialize_parameters}
+
+            method = method_class(**initialize_values)
+
+            # Solve
+            if method_name == "Straight-Line":
+                result = method.depreciation_expense()
+            elif method_name == "Double-Declining Balance":
+                result = method.depreciation_expense(int(values["year_end"]))
+            elif method_name == "Units of Production":
+                result = method.depreciation_expense(values["units_produced"])
 
             result_label.config(text=f"Depreciation Expense = {result:.02f}")
-        except:
+        except TypeError:
             result_label.config(text="Insufficient information given.")
+        except ZeroDivisionError:
+            result_label.config(text="Cannot divide by zero.")
+
 
     tk.Button(frame, text="Calculate", command=calculate).pack(pady=10)
 
