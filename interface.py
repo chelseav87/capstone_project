@@ -57,7 +57,6 @@ def create_formula_tab(parent_tab, label, formula_group):
 
         for variable_value, entry in inputted_values.items():
             if variable_value == target_variable:
-                entry.delete(0, tk.END)
                 entry.config(state="disabled")
             else:
                 entry.config(state="normal")
