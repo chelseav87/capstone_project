@@ -22,7 +22,40 @@ depreciation_classes = {
     "Units of Production": UnitsOfProduction
 }
 
-# Notebook Tab UI
+# Handle Result Formatting
+def result_format(x):
+    x = float(x)
+    if abs(x) >= 1e20 or abs(x) <= 1e-20:
+        return f"{x:.4e}"
+    return f"{x:.2f}"
+
+percentage_variables = [
+    "Profit Margin",
+    "Gross Margin",
+    "Return On Assets",
+    "Return On Equity"
+]
+
+ratio_variables = [
+    "Price to Earning Ratio",
+    "Current Ratio",
+    "Quick Ratio",
+    "Cash Ratio",
+    "Debt Ratio",
+    "Accounts Receivable Turnover",
+    "Accounts Payable Turnover",
+    "Asset Turnover"
+]
+
+int_variables = [
+    "Cash Conversion Cycle",
+    "Days Sales in Inventory",
+    "Days Sales Outstanding",
+    "Days Inventory Outstanding",
+    "Days Payable Outstanding"
+]
+
+# --- Notebook Tab UI --- #
 def create_formula_tab(parent_tab, label, formula_group):
     frame = tk.Frame(parent_tab)
     tk.Label(frame, text=label, font=("Helvetica", 12, "bold")).pack(pady=10)
@@ -88,7 +121,15 @@ def create_formula_tab(parent_tab, label, formula_group):
         try:
             formula = formula_group(**values)
             result = formula.solve(target_variable)
-            result_label.config(text=f"{target_variable} = {result:.02f}")
+
+            if target_variable in percentage_variables:
+                result_label.config(text=f"{target_variable} = {result_format(result * 100)}%")
+            elif target_variable in ratio_variables:
+                result_label.config(text=f"{target_variable} = {result_format(result)}")
+            elif target_variable in int_variables:
+                result_label.config(text=f"{target_variable} = {round(float(result_format(result)))} days")
+            else:
+                result_label.config(text=f"{target_variable} = ${result_format(result)}")
         except IndexError:
             result_label.config(text="Insufficient information given.")
 
@@ -172,7 +213,7 @@ def create_depreciation_tab(parent_tab):
             elif method_name == "Units of Production":
                 result = method.depreciation_expense(values["units_produced"])
 
-            result_label.config(text=f"Depreciation Expense = {result:.02f}")
+            result_label.config(text=f"Depreciation Expense = ${result_format(result)}")
         except TypeError:
             result_label.config(text="Insufficient information given.")
         except KeyError:
