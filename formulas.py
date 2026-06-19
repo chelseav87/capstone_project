@@ -11,8 +11,10 @@ class FormulaModel:
     def solve(self, target):
         to_solve = self.variables[target]
 
+        # substituting initial known values
         known_values = {self.variables[key]: value for key, value in self.values.items()}
 
+        # filtering valid equations
         relevant_equations = []
         for equation in self.equations:
             if to_solve in equation.free_symbols:
@@ -20,13 +22,18 @@ class FormulaModel:
                 if all(variable in known_values for variable in invalid_variables):
                     relevant_equations.append(equation)
 
+        # substituting filtered known values
         known_values = [equation.subs(known_values) for equation in relevant_equations]
         solution = solve(known_values[0], to_solve)
 
+        # multiple solutions
         if isinstance(solution, list):
             solution = solution[0]
+
+        # symbolic output
         if isinstance(solution, dict):
             solution = solution[to_solve]
+
         return solution
 
 

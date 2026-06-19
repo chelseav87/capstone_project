@@ -22,7 +22,7 @@ depreciation_classes = {
     "Units of Production": UnitsOfProduction
 }
 
-# Handle Result Formatting
+# handle result formatting (extreme values, filtering type of variable)
 def result_format(x):
     x = float(x)
     if abs(x) >= 1e20 or abs(x) <= 1e-20:
@@ -61,13 +61,13 @@ def create_formula_tab(parent_tab, label, formula_group):
     tk.Label(frame, text=label, font=("Helvetica", 12, "bold")).pack(pady=10)
     variables = list(formula_group.variables.keys())
 
-    # Variable to Solve
+    # select variable to solve for
     tk.Label(frame, text="Solving for:").pack()
     selected_variable = tk.StringVar(value=variables[0])
     options = ttk.OptionMenu(frame, selected_variable, "...", *variables)
     options.pack(pady=5)
 
-    # Input Prompts
+    # build input prompts
     input_row = tk.Frame(frame)
     input_row.pack(pady=15)
 
@@ -84,7 +84,7 @@ def create_formula_tab(parent_tab, label, formula_group):
 
         inputted_values[variable] = entry_row
 
-    # Update Input Prompts
+    # updating/tracking input prompts
     def update_inputs(*args):
         target_variable = selected_variable.get()
 
@@ -103,6 +103,7 @@ def create_formula_tab(parent_tab, label, formula_group):
             result_label.config(text="Please select a variable to solve for.")
             return
 
+        # collecting inputted values
         values = {}
         for variable_value, entry in inputted_values.items():
             if variable_value == target_variable:
@@ -146,13 +147,13 @@ def create_depreciation_tab(parent_tab):
     tk.Label(frame, text="Depreciation Methods", font=("Helvetica", 12, "bold")).pack(pady=10)
     methods = list(depreciation_classes.keys())
 
-    # Method to Solve
+    # select method to solve with
     tk.Label(frame, text="Choose method:").pack()
     selected_method = tk.StringVar(value=methods[0])
     options = ttk.OptionMenu(frame, selected_method, "...", *methods)
     options.pack(pady=5)
 
-    # Input Prompts
+    # input prompts
     input_row = tk.Frame(frame)
     input_row.pack(pady=15)
 
@@ -185,6 +186,7 @@ def create_depreciation_tab(parent_tab):
             return
         method_class = depreciation_classes[method_name]
 
+        # collecting inputted values
         values = {}
         for variable_value in variable_names:
             text = inputted_values[variable_value].get().strip()
@@ -199,13 +201,13 @@ def create_depreciation_tab(parent_tab):
         try:
             result = None
 
-            # Instantiate Method
+            # instantiate selected method
             initialize_parameters = method_class.__init__.__code__.co_varnames
             initialize_values = {key: value for key, value in values.items() if key in initialize_parameters}
 
             method = method_class(**initialize_values)
 
-            # Solve
+            # solve
             if method_name == "Straight-Line":
                 result = method.depreciation_expense()
             elif method_name == "Double-Declining Balance":
